@@ -1,6 +1,6 @@
 """
 File: Assingment 2 - Implementation.py
-Description: 
+Description: This is the assignment file: Assignment File 2: Implementation
 Author: Thomas Keo
 StudentID: 110349388
 EmailID: KEOTY004 
@@ -93,48 +93,62 @@ class Workshop:
 
     """ Displays weapons that are stored in the workshop, their enchants (if they have any) and their attack damage """
     def displayWeapons(self):
-        # for i in weapon:
-        #     if wepon enchent == True:
-        #           print("The <weapon name> is imbued with a <enchantment.useEffect()>.<weapon.attack()>")
-        #     else:
-        #           pritn(“The <weapon name> is not enchanted. <weapon.attack()>”)
+        for weapon in weapon:
+            if weapon.isEnchanted == True:
+                  print(f"The {weapon.name} is imbued with a {weapon.enchantment.useEffect()}. {weapon.attack()}")
+            else:
+                  print(f"The {weapon.name} is not enchanted. {weapon.attack()}")
         pass
 
 
     """ Displays what enchantments are stored in the workshop """
     def displayEnchantments(self):
-        # for i in enchantment:
-        #      print("A <enchantment name> enchantment is stored in the workshop")
+        for enchantment in enchantment:
+             print(f"A {enchantment.name} enchantment is stored in the workshop.")
         pass
 
 
     """ Displays the materials and their quantities in the workshop """
     def displayMaterials(self):
-        # for i materials:
-        #      print("<material name>: <number of materials> remaining"
+        for material, quantity in self.materials.items():
+             print(f"{material}: {quantity} remaining")
         pass
     
 
     """ Appends the weapon list with the added weapon """
     def addWeapon(self, weapon):
         self.weapon.append(weapon)
-        pass
+        
 
     """ Removes the weapon from the weapon list """
     def removeWeapon(self, weapon):
         self.weapon.remove(weapon)
-        pass
+        
     
     """ Appends the enchantment list with the added enchantment """
     def addEnchantment(self, enchantment):
         self.enchantment.append(enchantment)
-        pass
+        
 
     """ Removes the enchantment from the enchantment list """
     def removeEnchantment(self, enchantment):
         self.enchantment.remove(enchantment)
-        pass
+       
 
+    def addMaterial(self, material, quantity):
+        if material in self.material:
+            self.material[material] += quantity
+        else:
+            self.material[material] = quantity
+    
+    def removeMaterial(self, material, quantity):
+        if material in self.materials:
+            if self.materials[material] >= quantity:
+                self.materials[material] -= quantity
+            else:
+                raise ValueError("Not enough material available.")
+        else:
+            raise ValueError("Material not found in the workshop")
 
 class Crafter(ABC):
     def __init__(self):
@@ -151,7 +165,7 @@ class Forge(Crafter):
     def __init__(self):
         pass
 
-    def craft(self, primaryMaterial, catalystMaterial):
+    def craft(self, weapon, primaryMaterial, catalystMaterial):
         # removes both the primary and catalystMaterial from the materials list
         # Adds a new weapon based on the materials that was added into the weapon list
         # materials[primaryMaterial.__class__.__name__] -= 1
@@ -179,8 +193,6 @@ class Enchanter(Crafter):
             "Venomous": "afflicts a deadly, fast-acting toxin"}
 
     def craft(self, primaryMaterial, catalystMaterial):
-        # removes both the primary and catalystMaterial from the materials list
-        # Adds a new enchant based on the materials that was added into the enchant list
         # materials[primaryMaterial.__class__.__name__] -= 1
         # materials[catalystMaterial.__class__.__name__] -= 1
         pass
@@ -202,9 +214,9 @@ class Enchanter(Crafter):
         pass
 
 class Weapon:
-    def __init__(self, name, damage, primaryMaterial, catalystMaterial):
+    def __init__(self, name, primaryMaterial, catalystMaterial):
         self.__name = name
-        self.__damage = damage
+        self.__damage = 0
         self.__primaryMaterial = primaryMaterial
         self.__catalystMaterial = catalystMaterial
         self.__isEnchanted = False
@@ -255,9 +267,9 @@ class Weapon:
         #rounded to 2 decimal places
 
 class Enchantment:
-    def __init__(self, name, magicDamage, effect, primaryMaterial, catalystMaterial):
+    def __init__(self, name, effect, primaryMaterial, catalystMaterial):
         self.__name = name
-        self.__magicDamage = magicDamage
+        self.__magicDamage = 0
         self.__effect = effect
         self.__primaryMaterial = primaryMaterial
         self.__catalystMaterial = catalystMaterial
