@@ -84,8 +84,48 @@ class Workshop:
         self.enchantment = []
         self.material = {}
 
+    def displayWeapons(self):
+        # for i in weapon:
+        #     if wepon enchent == True:
+        #           print("The <weapon name> is imbued with a <enchantment.useEffect()>.<weapon.attack()>")
+        #     else:
+        #           pritn(“The <weapon name> is not enchanted. <weapon.attack()>”)
+        pass
+    def displayEnchantments(self):
+        # for i in enchantment:
+        #      print("A <enchantment name> enchantment is stored in the workshop")
+        pass
+    def displayMaterials(self):
+        # for i materials:
+        #      print("<material name>: <number of materials> remaining"
+        pass
+    def addWeapon(self, weapon):
+        self.weapon.append(weapon)
+        pass
+    def removeWeapon(self, weapon):
+        self.weapon.remove(weapon)
+        pass
+    def addEnchantment(self, enchantment):
+        self.enchantment.append(enchantment)
+        pass
+    def removeEnchantment(self, enchantment):
+        self.enchantment.remove(enchantment)
+        pass
 
 
+class Crafter(ABC):
+    def __init__(self):
+        pass
+    
+    @classmethod
+    def craft(self):
+        pass
+
+    def disassemble(self):
+        pass
+
+class Forge(Crafter):
+    def __init__(self):
 
 
 
