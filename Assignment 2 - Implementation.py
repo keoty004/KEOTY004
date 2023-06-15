@@ -93,23 +93,29 @@ class Workshop:
 
     """ Displays weapons that are stored in the workshop, their enchants (if they have any) and their attack damage """
     def displayWeapons(self):
+        display = ''
         for weapon in self.weapons:
             if weapon.isEnchanted == True:
-                print(f"The {weapon.name} is imbued with a {weapon.enchantment.useEffect}. It deals {weapon.attack} damage.")
+                display += (f"The {weapon.name} is imbued with a {weapon.enchantment.useEffect}. It deals {weapon.attack} damage.\n")
             else:
-                print(f"The {weapon.name} is not enchanted. {weapon.attack}")
+                display += (f"The {weapon.name} is not enchanted. {weapon.attack} damage.\n")
+        return display
 
 
     """ Displays what enchantments are stored in the workshop """
     def displayEnchantments(self):
+        displayenchants = ''
         for enchantment in self.enchantments:
-            print(f"A {enchantment.name} enchantment is stored in the workshop.")
+            displayenchants += (f"A {enchantment.name} enchantment is stored in the workshop.\n")
+        return displayenchants
 
 
     """ Displays the materials and their quantities in the workshop """
     def displayMaterials(self):
+        displaymats = ''
         for material, quantity in self.materials.items():
-            print(f"{material}: {quantity} remaining")
+            displaymats += (f"{material}: {quantity} remaining.\n")
+        return displaymats
     
 
     """ Appends the weapon list with the added weapon """
