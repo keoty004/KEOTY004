@@ -208,11 +208,10 @@ class Enchanter(Crafter):
         pass
 
     def disassemble(self, enchantment, materials):
-
-        materials[enchantment.__primaryMaterial.__class__.__name__] += 1
-        materials[enchantment.__catalystMaterial.__class__.__name__] += 1
-        # for i in self.recipes():
-        #     check for the name passed as a parameter is in the dictionary 
+        primaryMaterial = enchantment.getPrimaryMaterial()
+        catalystMaterial = enchantment.getCatalystMaterial()
+        materials[primaryMaterial.__class__.__name__] += 1
+        materials[catalystMaterial.__class__.__name__] += 1
         pass        
 
     def enchant(self, weapon, enchantment):
@@ -273,8 +272,8 @@ class Weapon:
         return damage
     
     def attack(self):
-        return print(f"It deals <calculate damage> damage.")
         #rounded to 2 decimal places
+        return print(f"It deals {self.__damage:.2f} damage.")
 
 class Enchantment:
     def __init__(self, primaryMaterial, catalystMaterial):
