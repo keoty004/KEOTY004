@@ -94,25 +94,22 @@ class Workshop:
     """ Displays weapons that are stored in the workshop, their enchants (if they have any) and their attack damage """
     def displayWeapons(self):
         for weapon in self.weapons:
-            if weapon.getEnchanted == True:
-                  print(f"The {weapon.getName} is imbued with a {weapon.enchantment.useEffect()}. {weapon.attack()}")
+            if weapon.isEnchanted == True:
+                print(f"The {weapon.name} is imbued with a {weapon.enchantment.useEffect}. It deals {weapon.attack} damage.")
             else:
-                  print(f"The {weapon.getName} is not enchanted. {weapon.attack()}")
-        pass
+                print(f"The {weapon.name} is not enchanted. {weapon.attack}")
 
 
     """ Displays what enchantments are stored in the workshop """
     def displayEnchantments(self):
         for enchantment in self.enchantments:
-             print(f"A {enchantment.name} enchantment is stored in the workshop.")
-        pass
+            print(f"A {enchantment.name} enchantment is stored in the workshop.")
 
 
     """ Displays the materials and their quantities in the workshop """
     def displayMaterials(self):
         for material, quantity in self.materials.items():
-             print(f"{material}: {quantity} remaining")
-        pass
+            print(f"{material}: {quantity} remaining")
     
 
     """ Appends the weapon list with the added weapon """
@@ -195,7 +192,8 @@ class Enchanter(Crafter):
             "Darkness": "binds the enemy in dark vines",
             "Cursed": "causes the enemy to become crazed",
             "Hydro": "envelops the enemy in a suffocating bubble",
-            "Venomous": "afflicts a deadly, fast-acting toxin"}
+            "Venomous": "afflicts a deadly, fast-acting toxin",
+            "Earthly": "Earthly things"}
 
     def craft(self, enchantmentName, primaryMaterial, catalystMaterial, materials):
         enchantment = Enchantment(primaryMaterial, catalystMaterial)
@@ -205,21 +203,21 @@ class Enchanter(Crafter):
         )
         materials[primaryMaterial.__class__.__name__] -= 1
         materials[catalystMaterial.__class__.__name__] -= 1
-        pass
+        return enchantment
 
     def disassemble(self, enchantment, materials):
         primaryMaterial = enchantment.getPrimaryMaterial()
         catalystMaterial = enchantment.getCatalystMaterial()
         materials[primaryMaterial.__class__.__name__] += 1
         materials[catalystMaterial.__class__.__name__] += 1
-        pass        
+        return enchantment      
 
-    def enchant(self, weapon, enchantment):
-        # pass weapon, enchantment name and enxhantment
-        # weapon attribute should be updated to reflect enxhantment
-        # damage shoul dbe adjusted using following algorithm
-        #     𝑤𝑒𝑎𝑝𝑜𝑛. 𝑑𝑎𝑚𝑎𝑔𝑒 ∗= 𝑒𝑛𝑐ℎ𝑎𝑛𝑡𝑚𝑒𝑛𝑡. 𝑚𝑎𝑔𝑖𝑐𝐷𝑎𝑚𝑎ge
-        pass
+    def enchant(self, weapon, weaponName, enchantment):
+        weapon.damage *= enchantment.magicDamage
+        weapon.setEnchantment(enchantment)
+        weapon.setEnchanted()
+        weapon.name = weaponName
+        return weapon
 
 class Weapon:
     def __init__(self, primaryMaterial, catalystMaterial):
@@ -227,6 +225,7 @@ class Weapon:
         self.__damage = 0
         self.__primaryMaterial = primaryMaterial
         self.__catalystMaterial = catalystMaterial
+        self.__enchantment = None
         self.__isEnchanted = False
 
     def getName(self):
@@ -245,20 +244,19 @@ class Weapon:
         return self.__catalystMaterial
 
     def getEnchantment(self):
-        pass
+        return self.__enchantment
 
     def setName(self, name):
         self.__name = name
 
     def setDamage(self, damage):
         self.__damage = damage
-        pass
 
     def setEnchanted(self):
-        pass
+        self.__isEnchanted = True
     
-    def setEnchantment(self):
-        pass
+    def setEnchantment(self, enchantment):
+        self.__enchantment = enchantment
 
     def calculateDamage(self, primaryMaterial, catalystMaterial):
         if isinstance(primaryMaterial, Wood) and isinstance(catalystMaterial, Wood):
@@ -273,13 +271,19 @@ class Weapon:
     
     def attack(self):
         #rounded to 2 decimal places
-        return print(f"It deals {self.__damage:.2f} damage.")
+        return round(self.__damage, 2)
+    
+    name = property(getName, setName)
+    damage = property(getDamage, setDamage)
+    isEnchanted = property(getEnchanted, setEnchanted)
+    enchantment = property(getEnchantment, setEnchantment)
+    attack = property(attack)
 
 class Enchantment:
     def __init__(self, primaryMaterial, catalystMaterial):
         self.__name = ''
-        self.__magicDamage = 0
         self.__effect = ''
+        self.__magicDamage = 0
         self.__primaryMaterial = primaryMaterial
         self.__catalystMaterial = catalystMaterial
 
@@ -287,30 +291,38 @@ class Enchantment:
         return self.__name
 
     def getMagicDamage(self):
-        return self.__getMagicDamage
+        return self.__magicDamage
 
     def getEffect(self):
-        return self.__getEffect
+        return self.__effect
 
-    def getPrimaryMaterial():
-        pass
+    def getPrimaryMaterial(self):
+        return self.__primaryMaterial
 
-    def getCatalystMaterial():
-        pass
+    def getCatalystMaterial(self):
+        return self.__catalystMaterial
 
     def setName(self, name):
-        return self.__name
+        self.__name = name
 
     def setMagicDamage(self, magicDamage):
-        return self.__magicDamage
+        self.__magicDamage = magicDamage
+    
+    def setEffect(self, effect):
+        self.__effect = effect
 
     def calculateMagicDamage(self, primaryMaterial, catalystMaterial):
         magicDamage = primaryMaterial.magicPower + catalystMaterial.magicPower
         return magicDamage
     
-    def useEffect():
-        return print(f"{enchantment} enchantment and {self.recipes[enchantment]}")
+    def useEffect(self):
+        return (f"{enchantment} enchantment and {workshop.enchanter.recipes[enchantment]}")
     
+    name = property(getName, setName)
+    effect = property(getEffect, setEffect)
+    magicDamage = property(getMagicDamage, setMagicDamage)
+    useEffect = property(useEffect)
+
 # Create a workshop, forge, enchanter.
 workshop = Workshop(Forge(), Enchanter())
 
