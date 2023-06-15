@@ -98,7 +98,7 @@ class Workshop:
             if weapon.isEnchanted == True:
                 display += (f"The {weapon.name} is imbued with a {weapon.enchantment.useEffect}. It deals {weapon.attack} damage.\n")
             else:
-                display += (f"The {weapon.name} is not enchanted. {weapon.attack} damage.\n")
+                display += (f"The {weapon.name} is not enchanted. It deals {weapon.attack} damage.\n")
         return display
 
 
@@ -204,6 +204,7 @@ class Enchanter(Crafter):
     def craft(self, enchantmentName, primaryMaterial, catalystMaterial, materials):
         enchantment = Enchantment(primaryMaterial, catalystMaterial)
         enchantment.setName(enchantmentName)
+        enchantment.setEffect(self.recipes[enchantmentName])
         enchantment.setMagicDamage(
             enchantment.calculateMagicDamage(primaryMaterial, catalystMaterial)
         )
@@ -272,7 +273,7 @@ class Weapon:
         elif isinstance(primaryMaterial, Wood) and isinstance(catalystMaterial, Metal):
             damage = (primaryMaterial.strength * (catalystMaterial.strength * catalystMaterial.purity))
         elif isinstance(primaryMaterial, Metal) and isinstance(catalystMaterial, Wood):
-            damage = (primaryMaterial.strength * (catalystMaterial.strength * catalystMaterial.strength))
+            damage = (primaryMaterial.strength * (primaryMaterial.purity * catalystMaterial.strength))
         return damage
     
     def attack(self):
@@ -318,11 +319,11 @@ class Enchantment:
         self.__effect = effect
 
     def calculateMagicDamage(self, primaryMaterial, catalystMaterial):
-        magicDamage = primaryMaterial.magicPower + catalystMaterial.magicPower
+        magicDamage = primaryMaterial.magicPower * primaryMaterial.strength + catalystMaterial.magicPower * catalystMaterial.strength
         return magicDamage
     
     def useEffect(self):
-        return (f"{enchantment} enchantment and {workshop.enchanter.recipes[enchantment]}")
+        return (f"{self.name} enchantment and {self.effect}")
     
     name = property(getName, setName)
     effect = property(getEffect, setEffect)
@@ -390,6 +391,7 @@ for enchantment, materials in enchantmentBlueprints.items():
     enchantment, materials[0], materials[1], workshop.materials)
     workshop.addEnchantment(craftedEnchantment)
 
+
 # Disassemble the extra enchantment.
 workshop.removeEnchantment(workshop.enchanter.disassemble(
     workshop.enchantments[7], workshop.materials))
@@ -404,5 +406,6 @@ print(workshop.displayMaterials())
 for i in range(len(enchantedWeapons)):
     workshop.enchanter.enchant(
         workshop.weapons[i], enchantedWeapons[i], workshop.enchantments[i])
+
 print("-----------------------------------Enchanted Armoury----------------------------------")
 print(workshop.displayWeapons())
