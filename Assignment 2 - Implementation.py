@@ -86,14 +86,14 @@ class Workshop:
     def __init__(self, forge, enchanter):
         self.enchanter = enchanter
         self.forge = forge
-        self.weapon = []
-        self.enchantment = []
-        self.material = {}
+        self.weapons = {}
+        self.enchantments = {}
+        self.materials = {}
 
 
     """ Displays weapons that are stored in the workshop, their enchants (if they have any) and their attack damage """
     def displayWeapons(self):
-        for weapon in weapon:
+        for weapon in self.weapons:
             if weapon.isEnchanted == True:
                   print(f"The {weapon.name} is imbued with a {weapon.enchantment.useEffect()}. {weapon.attack()}")
             else:
@@ -103,7 +103,7 @@ class Workshop:
 
     """ Displays what enchantments are stored in the workshop """
     def displayEnchantments(self):
-        for enchantment in enchantment:
+        for enchantment in self.enchantments:
              print(f"A {enchantment.name} enchantment is stored in the workshop.")
         pass
 
@@ -136,10 +136,10 @@ class Workshop:
        
 
     def addMaterial(self, material, quantity):
-        if material in self.material:
-            self.material[material] += quantity
+        if material in self.materials:
+            self.materials[material] += quantity
         else:
-            self.material[material] = quantity
+            self.materials[material] = quantity
     
     def removeMaterial(self, material, quantity):
         if material in self.materials:
@@ -151,38 +151,37 @@ class Workshop:
             raise ValueError("Material not found in the workshop")
 
 class Crafter(ABC):
-    def __init__(self):
-        pass
-    
+
     @classmethod
-    def craft(self, primaryMaterial, catalystMaterial):
+    def craft(self):
         pass
 
     def disassemble(self):
         pass
 
 class Forge(Crafter):
+
     def __init__(self):
         pass
 
-    def craft(self, weapon, primaryMaterial, catalystMaterial):
-        # removes both the primary and catalystMaterial from the materials list
-        # Adds a new weapon based on the materials that was added into the weapon list
-        # materials[primaryMaterial.__class__.__name__] -= 1
-        # materials[catalystMaterial.__class__.__name__] -= 1
+    def craft(self, weapon_name, primary_material, catalyst_material, materials):
+        if primary_material.__class__.__name__ not in materials or catalyst_material.__class__.__name__ not in materials:
+            raise ValueError("Required materials not found in the workshop.")
+        else:
+            materials[primary_material.__class__.__name__] -= 1
+            materials[catalyst_material.__class__.__name__] -= 1
 
-        pass
+        return Weapon(weapon_name, primary_material, catalyst_material)
 
 
-    def disassemble(self, weapon):
-        # removes the weapon from the weapon list
-        # adds the materials back into the materials list
-        # materials[primaryMaterial.__class__.__name__] += 1
-        # materials[catalystMaterial.__class__.__name__] += 1
-        pass
+    def disassemble(self, weapon, materials):
+        materials[weapon.primaryMaterial.__class__.__name__] += 1
+        materials[weapon.catalystMaterial.__class__.__name__] += 1
+
+        return weapon
 
 class Enchanter(Crafter):
-    def __init__(self, recipes):
+    def __init__(self):
         self.recipes = {
             "Holy": "pulses a blinding beam of light",
             "Lava": "melts the armour off an enemy",
@@ -193,8 +192,9 @@ class Enchanter(Crafter):
             "Venomous": "afflicts a deadly, fast-acting toxin"}
 
     def craft(self, primaryMaterial, catalystMaterial):
-        # materials[primaryMaterial.__class__.__name__] -= 1
-        # materials[catalystMaterial.__class__.__name__] -= 1
+        
+        materials[primaryMaterial.__class__.__name__] -= 1
+        materials[catalystMaterial.__class__.__name__] -= 1
         pass
 
     def disassemble(self, enchant):
@@ -300,7 +300,7 @@ class Enchantment:
         return magicDamage
     
     def useEffect():
-        return print(f"<enchantment name> enchantment and <enchantment effect>")
+        return print(f"{enchantment} enchantment and {self.recipes[enchantment]}")
     
 # Create a workshop, forge, enchanter.
 workshop = Workshop(Forge(), Enchanter())
