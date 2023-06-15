@@ -94,10 +94,10 @@ class Workshop:
     """ Displays weapons that are stored in the workshop, their enchants (if they have any) and their attack damage """
     def displayWeapons(self):
         for weapon in self.weapons:
-            if weapon.isEnchanted == True:
-                  print(f"The {weapon.name} is imbued with a {weapon.enchantment.useEffect()}. {weapon.attack()}")
+            if weapon.getEnchanted == True:
+                  print(f"The {weapon.getName} is imbued with a {weapon.enchantment.useEffect()}. {weapon.attack()}")
             else:
-                  print(f"The {weapon.name} is not enchanted. {weapon.attack()}")
+                  print(f"The {weapon.getName} is not enchanted. {weapon.attack()}")
         pass
 
 
@@ -125,13 +125,13 @@ class Workshop:
         
     
     """ Appends the enchantment list with the added enchantment """
-    def addEnchantment(self, enchantment):
-        self.enchantment.append(enchantment)
+    def addEnchantment(self, enchantments):
+        self.enchantments.append(enchantments)
         
 
     """ Removes the enchantment from the enchantment list """
     def removeEnchantment(self, enchantment):
-        self.enchantment.remove(enchantment)
+        self.enchantments.remove(enchantment)
        
 
     def addMaterial(self, material, quantity):
@@ -167,7 +167,7 @@ class Forge(Crafter):
         weapon = Weapon(primaryMaterial, catalystMaterial)
         weapon.setName(weaponName)
         weapon.setDamage(
-            weapon.calculateDamege(primaryMaterial, catalystMaterial)
+            weapon.calculateDamage(primaryMaterial, catalystMaterial)
         )
         if primaryMaterial.__class__.__name__ not in materials or catalystMaterial.__class__.__name__ not in materials:
             raise ValueError("Required materials not found in the workshop.")
@@ -175,12 +175,14 @@ class Forge(Crafter):
             materials[primaryMaterial.__class__.__name__] -= 1
             materials[catalystMaterial.__class__.__name__] -= 1
 
-        return Weapon(weaponName, primaryMaterial, catalystMaterial)
+        return weapon
 
 
     def disassemble(self, weapon, materials):
-        materials[weapon.primaryMaterial.__class__.__name__] += 1
-        materials[weapon.catalystMaterial.__class__.__name__] += 1
+        primaryMaterial = weapon.getPrimaryMaterial()
+        catalystMaterial = weapon.getCatalystMaterial()
+        materials[primaryMaterial.__class__.__name__] += 1
+        materials[catalystMaterial.__class__.__name__] += 1
 
         return weapon
 
@@ -195,17 +197,20 @@ class Enchanter(Crafter):
             "Hydro": "envelops the enemy in a suffocating bubble",
             "Venomous": "afflicts a deadly, fast-acting toxin"}
 
-    def craft(self, primaryMaterial, catalystMaterial):
-        
+    def craft(self, enchantmentName, primaryMaterial, catalystMaterial, materials):
+        enchantment = Enchantment(primaryMaterial, catalystMaterial)
+        enchantment.setName(enchantmentName)
+        enchantment.setMagicDamage(
+            enchantment.calculateMagicDamage(primaryMaterial, catalystMaterial)
+        )
         materials[primaryMaterial.__class__.__name__] -= 1
         materials[catalystMaterial.__class__.__name__] -= 1
         pass
 
-    def disassemble(self, enchant):
-        # removes the enchant from the enchant list
-        # adds the materials back into the materials list
-        # materials[primaryMaterial.__class__.__name__] += 1
-        # materials[catalystMaterial.__class__.__name__] += 1
+    def disassemble(self, enchantment, materials):
+
+        materials[enchantment.__primaryMaterial.__class__.__name__] += 1
+        materials[enchantment.__catalystMaterial.__class__.__name__] += 1
         # for i in self.recipes():
         #     check for the name passed as a parameter is in the dictionary 
         pass        
@@ -231,17 +236,14 @@ class Weapon:
     def getDamage(self):
         return self.__damage
     
-    def getEnchanted():
-        # if enchanted:
-        #     return True
-        # elif notenchanted:
-        #     return False
-        pass
-    def getPrimaryMaterial(self):
-        pass
+    def getEnchanted(self):
+        return self.__isEnchanted
 
-    def getSecondaryMaterial(self):
-        pass
+    def getPrimaryMaterial(self):
+        return self.__primaryMaterial
+
+    def getCatalystMaterial(self):
+        return self.__catalystMaterial
 
     def getEnchantment(self):
         pass
@@ -249,7 +251,8 @@ class Weapon:
     def setName(self, name):
         self.__name = name
 
-    def setDamage(self):
+    def setDamage(self, damage):
+        self.__damage = damage
         pass
 
     def setEnchanted(self):
@@ -258,15 +261,15 @@ class Weapon:
     def setEnchantment(self):
         pass
 
-    def calculateDamege(self, primaryMaterial, catalystMaterial):
-        if primaryMaterial == Wood and catalystMaterial == Wood:
+    def calculateDamage(self, primaryMaterial, catalystMaterial):
+        if isinstance(primaryMaterial, Wood) and isinstance(catalystMaterial, Wood):
             damage = primaryMaterial.strength * catalystMaterial.strength
-        elif primaryMaterial == Metal and catalystMaterial == Metal:
+        elif isinstance(primaryMaterial, Metal) and isinstance(catalystMaterial, Metal):
             damage = (primaryMaterial.strength * primaryMaterial.purity) + (catalystMaterial.strength * catalystMaterial.purity)
-        elif primaryMaterial == Wood and catalystMaterial == Metal:
+        elif isinstance(primaryMaterial, Wood) and isinstance(catalystMaterial, Metal):
             damage = (primaryMaterial.strength * (catalystMaterial.strength * catalystMaterial.purity))
-        else:
-            damage = (primaryMaterial.purity * (catalystMaterial.strength * catalystMaterial.strength))
+        elif isinstance(primaryMaterial, Metal) and isinstance(catalystMaterial, Wood):
+            damage = (primaryMaterial.strength * (catalystMaterial.strength * catalystMaterial.strength))
         return damage
     
     def attack(self):
@@ -274,21 +277,21 @@ class Weapon:
         #rounded to 2 decimal places
 
 class Enchantment:
-    def __init__(self, name, effect, primaryMaterial, catalystMaterial):
-        self.__name = name
+    def __init__(self, primaryMaterial, catalystMaterial):
+        self.__name = ''
         self.__magicDamage = 0
-        self.__effect = effect
+        self.__effect = ''
         self.__primaryMaterial = primaryMaterial
         self.__catalystMaterial = catalystMaterial
 
-    def getName():
-        pass
+    def getName(self):
+        return self.__name
 
-    def getMagicDamage():
-        pass
+    def getMagicDamage(self):
+        return self.__getMagicDamage
 
-    def getEffect():
-        pass
+    def getEffect(self):
+        return self.__getEffect
 
     def getPrimaryMaterial():
         pass
@@ -296,11 +299,11 @@ class Enchantment:
     def getCatalystMaterial():
         pass
 
-    def setName():
-        pass
+    def setName(self, name):
+        return self.__name
 
-    def setMagicDamage():
-        pass
+    def setMagicDamage(self, magicDamage):
+        return self.__magicDamage
 
     def calculateMagicDamage(self, primaryMaterial, catalystMaterial):
         magicDamage = primaryMaterial.magicPower + catalystMaterial.magicPower
