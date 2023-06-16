@@ -200,6 +200,12 @@ class Forge(Crafter):
 
         return weapon
 
+""" 
+
+Enchanter class which contains methods to deal with enchantments which include:
+    crafters, disassemblers, getters and setters
+    
+"""
 class Enchanter(Crafter):
     def __init__(self):
         self.recipes = {
@@ -212,6 +218,7 @@ class Enchanter(Crafter):
             "Venomous": "afflicts a deadly, fast-acting toxin",
             "Earthly": "Earthly things"}
 
+    """ Crafts the enchantment from the materials provided and removes them from the materials disctionary"""
     def craft(self, enchantmentName, primaryMaterial, catalystMaterial, materials):
         enchantment = Enchantment(primaryMaterial, catalystMaterial)
         enchantment.setName(enchantmentName)
@@ -223,6 +230,7 @@ class Enchanter(Crafter):
         materials[catalystMaterial.__class__.__name__] -= 1
         return enchantment
 
+    """ Disassembles the enchantment provided and stores materials in the materials dictionary"""    
     def disassemble(self, enchantment, materials):
         primaryMaterial = enchantment.primaryMaterial
         catalystMaterial = enchantment.catalystMaterial
@@ -230,6 +238,7 @@ class Enchanter(Crafter):
         materials[catalystMaterial.__class__.__name__] += 1
         return enchantment      
 
+    """ Enchants the weapon and adjusts the damage and weapon name """
     def enchant(self, weapon, weaponName, enchantment):
         weapon.damage *= enchantment.magicDamage
         weapon.setEnchantment(enchantment)
@@ -237,6 +246,12 @@ class Enchanter(Crafter):
         weapon.name = weaponName
         return weapon
 
+""" 
+
+Weapon class which include:
+    damage calculators, rounders and getters and setters
+
+"""
 class Weapon:
     def __init__(self, primaryMaterial, catalystMaterial):
         self.__name = ''
@@ -276,6 +291,7 @@ class Weapon:
     def setEnchantment(self, enchantment):
         self.__enchantment = enchantment
 
+    """ Calculates the damage based on the primary material and catalyst material """
     def calculateDamage(self, primaryMaterial, catalystMaterial):
         if isinstance(primaryMaterial, Wood) and isinstance(catalystMaterial, Wood):
             damage = primaryMaterial.strength * catalystMaterial.strength
@@ -300,6 +316,12 @@ class Weapon:
     primaryMaterial = property(getPrimaryMaterial)
     catalystMaterial = property(getCatalystMaterial)
 
+"""
+
+Enchantment class which include:
+    damage calculators, getters and setters
+
+"""
 class Enchantment:
     def __init__(self, primaryMaterial, catalystMaterial):
         self.__name = ''
@@ -332,13 +354,16 @@ class Enchantment:
     def setEffect(self, effect):
         self.__effect = effect
 
+    """ Calculates the damage of the enchantment from the primary and catalyst material"""
     def calculateMagicDamage(self, primaryMaterial, catalystMaterial):
         magicDamage = primaryMaterial.magicPower * primaryMaterial.strength + catalystMaterial.magicPower * catalystMaterial.strength
         return magicDamage
     
+    """ Uses the new name and enchantment effect """
     def useEffect(self):
         return (f"{self.name} enchantment and {self.effect}")
     
+    """ Implementing properties for enchantment functions """
     name = property(getName, setName)
     effect = property(getEffect, setEffect)
     magicDamage = property(getMagicDamage, setMagicDamage)
