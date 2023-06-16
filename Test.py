@@ -101,9 +101,9 @@ class TestEnchanter(unittest.TestCase):
         self.enchanter.enchant(self.weapon, 'Holy Greatsword', self.enchantment)
 
         # self.weapon.enchantment.useEffect = 'pulses a blinding beam of light'
-        self.enchantment.useEffect = 'pulses a blinding beam of light'
+        self.enchantment.effect = 'pulses a blinding beam of light'
         self.weapon.damage = 831.6
-        self.assertEqual(self.workshop.displayWeapons(), 'The Holy Greatsword is imbued with a Holy enchantment and pulses a blinding beam of light. It deals 831.6 damage.')
+        self.assertEqual(self.workshop.displayWeapons(), 'The Holy Greatsword is imbued with a Holy enchantment and pulses a blinding beam of light. It deals 831.6 damage.\n')
 
 class TestWeapon(unittest.TestCase):
     def setUp(self):
